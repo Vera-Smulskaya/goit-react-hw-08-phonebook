@@ -4,6 +4,7 @@ import { fetchContacts } from '../redux/contacts/contacts.reducer';
 import Loader from './Loader/Loader';
 import { Route, Routes } from 'react-router-dom';
 import Layout from './Layout/Layout';
+import { refreshThunk } from 'redux/auth/auth.reducer';
 
 const HomePage = lazy(() => import('../pages/HomePage/HomePage'));
 const LoginPage = lazy(() => import('../pages/LoginPage/LoginPage'));
@@ -15,6 +16,10 @@ export const App = () => {
 
   useEffect(() => {
     dispatch(fetchContacts());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(refreshThunk());
   }, [dispatch]);
 
   return (

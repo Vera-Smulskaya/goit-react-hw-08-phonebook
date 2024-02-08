@@ -41,6 +41,30 @@ export const registerThunk = createAsyncThunk(
   }
 );
 
+export const refreshThunk = createAsyncThunk(
+  'auth/refresh',
+  async (_, thunkApi) => {
+    try {
+      const state = thunkApi.getState();
+      const token = state.auth.token;
+      setToken(token);
+      const { data } = await instance.get('/users/current');
+
+      return data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.message);
+    }
+  },
+  {
+    condition: (_, thunkApi) => {
+      const state = thunkApi.getState();
+      const token = state.auth.token;
+      if (!token) return false;
+      return true;
+    },
+  }
+);
+
 const initialState = {
   isLoading: false,
   error: null,
@@ -67,13 +91,29 @@ const authSlice = createSlice({
         state.token = payload.token;
         state.userData = payload.user;
       })
-
-      .addMatcher(isAnyOf(loginThunk.pending, registerThunk.pending), state => {
-        state.isLoading = true;
-        state.error = null;
+      .addCase(refreshThunk.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.authenticated = true;
+        state.userData = payload;
       })
+
       .addMatcher(
-        isAnyOf(loginThunk.rejected, registerThunk.rejected),
+        isAnyOf(
+          loginThunk.pending,
+          registerThunk.pending,
+          refreshThunk.pending
+        ),
+        state => {
+          state.isLoading = true;
+          state.error = null;
+        }
+      )
+      .addMatcher(
+        isAnyOf(
+          loginThunk.rejected,
+          registerThunk.rejected,
+          refreshThunk.rejected
+        ),
         (state, { payload }) => {
           state.isLoading = false;
           state.error = payload;
