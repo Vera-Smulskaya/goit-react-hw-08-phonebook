@@ -41,6 +41,19 @@ export const registerThunk = createAsyncThunk(
   }
 );
 
+export const logOutThunk = createAsyncThunk(
+  'auth/logOut',
+  async (_, thunkApi) => {
+    try {
+      const { data } = await instance.post('/users/logout');
+
+      return data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+
 export const refreshThunk = createAsyncThunk(
   'auth/refresh',
   async (_, thunkApi) => {
@@ -91,6 +104,9 @@ const authSlice = createSlice({
         state.token = payload.token;
         state.userData = payload.user;
       })
+      .addCase(logOutThunk.fulfilled, () => {
+        return initialState;
+      })
       .addCase(refreshThunk.fulfilled, (state, { payload }) => {
         state.isLoading = false;
         state.authenticated = true;
@@ -101,7 +117,8 @@ const authSlice = createSlice({
         isAnyOf(
           loginThunk.pending,
           registerThunk.pending,
-          refreshThunk.pending
+          refreshThunk.pending,
+          logOutThunk.pending
         ),
         state => {
           state.isLoading = true;
@@ -112,7 +129,8 @@ const authSlice = createSlice({
         isAnyOf(
           loginThunk.rejected,
           registerThunk.rejected,
-          refreshThunk.rejected
+          refreshThunk.rejected,
+          logOutThunk.rejected
         ),
         (state, { payload }) => {
           state.isLoading = false;

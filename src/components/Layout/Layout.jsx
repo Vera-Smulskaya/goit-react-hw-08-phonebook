@@ -1,15 +1,21 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import css from './Layout.module.css';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   selectAuthenticated,
   selectUserData,
 } from '../../redux/auth/auth.selector';
+import { logOutThunk } from '../../redux/auth/auth.reducer';
 
 export default function Layout({ children }) {
+  const dispatch = useDispatch();
   const authenticated = useSelector(selectAuthenticated);
   const userData = useSelector(selectUserData);
+
+  const onLogOut = () => {
+    dispatch(logOutThunk());
+  };
 
   return (
     <div>
@@ -25,7 +31,7 @@ export default function Layout({ children }) {
 
             <div>
               <span>Hello, {userData.name}! </span>
-              <button>Log out</button>
+              <button onClick={onLogOut}>Log out</button>
             </div>
           </>
         ) : (
