@@ -6,6 +6,8 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import Layout from './Layout/Layout';
 import { refreshThunk } from '../redux/auth/auth.reducer';
 import * as ROUTES from '../constants/routes';
+import RestrictedRoute from './RestrictedRoute';
+import PrivateRoute from './PrivateRoute';
 
 const HomePage = lazy(() => import('../pages/HomePage/HomePage'));
 const LoginPage = lazy(() => import('../pages/LoginPage/LoginPage'));
@@ -19,15 +21,27 @@ const appRoutes = [
   },
   {
     path: ROUTES.LOGIN_ROUTE,
-    element: <LoginPage />,
+    element: (
+      <RestrictedRoute>
+        <LoginPage />
+      </RestrictedRoute>
+    ),
   },
   {
     path: ROUTES.REGISTER_ROUTE,
-    element: <RegisterPage />,
+    element: (
+      <RestrictedRoute>
+        <RegisterPage />
+      </RestrictedRoute>
+    ),
   },
   {
     path: ROUTES.CONTACTS_ROUTE,
-    element: <ContactsPage />,
+    element: (
+      <PrivateRoute>
+        <ContactsPage />
+      </PrivateRoute>
+    ),
   },
 ];
 
