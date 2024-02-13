@@ -4,7 +4,7 @@ import { fetchContacts } from '../redux/contacts/contacts.reducer';
 import Loader from './Loader/Loader';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Layout from './Layout/Layout';
-import { refreshThunk } from '../redux/auth/auth.reducer';
+import { refreshThunk } from '../re`dux/auth/auth.reducer';
 import * as ROUTES from '../constants/routes';
 import RestrictedRoute from './RestrictedRoute';
 import PrivateRoute from './PrivateRoute';
